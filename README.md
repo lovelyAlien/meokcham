@@ -8,3 +8,4 @@
 ## 문서
 
 - [PRD](docs/PRD.md)
+- [기술 스택](docs/TECH_STACK.md)
