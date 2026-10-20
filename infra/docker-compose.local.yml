@@ -1,0 +1,22 @@
+# 로컬 개발용. 운영 구성(nginx, backend 컨테이너)은 서버를 준비할 때 추가한다.
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: meokcham
+      POSTGRES_USER: meokcham
+      POSTGRES_PASSWORD: meokcham
+      TZ: UTC
+    ports:
+      - "5432:5432"
+    volumes:
+      # PostgreSQL 18 이미지는 데이터 디렉터리가 /var/lib/postgresql/<버전> 아래에 생긴다.
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meokcham -d meokcham"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres-data:
