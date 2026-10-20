@@ -9,6 +9,7 @@
 
 - [PRD](docs/PRD.md)
 - [기술 스택](docs/TECH_STACK.md)
+- [DB 스키마](docs/DB_SCHEMA.md)
 
 ## 구성
 
@@ -17,7 +18,7 @@
 | `backend/` | Spring Boot API 서버 (Java 21, Gradle) |
 | `app/` | Expo(React Native) 앱 |
 | `infra/` | Docker Compose 설정 |
-| `docs/` | PRD, 기술 스택 문서 |
+| `docs/` | PRD, 기술 스택, DB 스키마 문서 |
 
 ## 로컬 실행
 
