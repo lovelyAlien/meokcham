@@ -87,3 +87,23 @@ meokcham/
 | Neon | 서울 리전이 없어 NCP 서버와의 왕복 지연이 생긴다 |
 | Redis | Refresh 토큰 저장 외에는 쓸 곳이 없다. 이 규모에서는 PostgreSQL로 충분하다 |
 | NativeWind | 빌드 설정이 늘어나고 Expo SDK 업그레이드 때 어긋날 위험이 있다 |
+
+## 7. 테스트 방침
+
+설계 포인트가 있는 곳(날짜 경계, 제약 조건, 집계, 에러 형식)에만 테스트를 둔다. 화면 모양을 검증하는 테스트는 만들지 않는다.
+
+| 대상 | 방식 | 도구 | 시점 |
+| --- | --- | --- | --- |
+| DB 제약·마이그레이션 | 통합 테스트(실제 PostgreSQL) | Testcontainers | 있음 (`SchemaConstraintsTest`) |
+| 엔티티 매핑(jsonb, MapsId 등) | 통합 테스트 | Testcontainers | 있음 (`EntityMappingTest`) |
+| 에러 응답 형식 | MockMvc 슬라이스 테스트 | Spring Test | 있음 (`GlobalExceptionHandlerTest`) |
+| 04:00 경계·타임존 날짜 계산 | 순수 함수 단위 테스트 (03:59/04:00, 자정 직후, 서머타임 지역) | JUnit 5 | 2단계, 구현과 함께 |
+| 잔디·스트릭·준수율 집계 쿼리 | 통합 테스트(네이티브 SQL을 실제 DB로) | Testcontainers | 2·4단계, 쿼리와 함께 |
+| 기록 API(upsert, 소급, 검증) | 컨트롤러~DB 통합 테스트 | MockMvc + Testcontainers | 2단계 |
+| 앱 순수 함수 (잔디 격자 계산, 날짜 채우기 등) | 단위 테스트 | jest-expo | 첫 순수 함수가 생기는 2단계에서 도입 |
+| 앱 화면·네비게이션 | 자동 테스트 없음. `typecheck` + `lint` + 실기기 수동 확인 | tsc, ESLint | 상시 |
+| 푸시 알림 | 서버 로직은 단위·통합 테스트, 발송·액션 버튼은 실기기 수동 확인 | - | 3단계 |
+
+- **CI는 PR·push마다** 백엔드 `./gradlew test`와 앱 `typecheck`·`lint`를 실행한다([4장](#4-인프라운영)). 앱 단위 테스트를 도입하면 `npm test`를 앱 워크플로에 추가한다.
+- 앱 테스트 프레임워크는 **테스트할 순수 함수가 생길 때** 도입한다. 지금은 대상이 없어서 미리 설치하지 않는다.
+- 시간을 다루는 코드는 `Clock`(백엔드)과 기준 시각 인자(앱)를 주입받게 만들어 테스트에서 시각을 고정한다.
