@@ -42,7 +42,7 @@ F7(음식별 잔디, Could)은 5단계 이후에 착수한다.
   - `notification_settings`는 PK가 `user_id`라 `@MapsId` 매핑
   - `ddl-auto: validate`이므로 엔티티와 스키마가 어긋나면 기동 시점에 잡힌다
 - [x] **공통 예외 처리:** `@RestControllerAdvice`로 ProblemDetail + `code` 필드, 검증 실패 응답(`errors[]`). API 명세의 에러 형식을 모든 API가 따르게 하는 기반이라 첫 API보다 먼저 만든다.
-- [x] **테스트 방침:** [TECH_STACK.md 7장](TECH_STACK.md#7-테스트-방침)에 정리. 백엔드는 Testcontainers 통합 테스트와 날짜 계산 단위 테스트, 앱은 typecheck·lint와 순수 함수 단위 테스트(2단계에 jest-expo 도입)만 자동화한다.
+- [x] **테스트 방침:** [TECH_STACK.md 7장](TECH_STACK.md#7-테스트-방침)에 정리. 백엔드는 Testcontainers 통합 테스트와 날짜 계산 단위 테스트, 앱은 typecheck·lint와 로직 단위 테스트(1단계에 jest-expo 도입)만 자동화한다.
 - [x] `main` 푸시, CI 실행 확인 (최근 실행 모두 success, 새 엔티티·예외 테스트 포함한 backend 실행 확인)
 
 ### 1. 인증
