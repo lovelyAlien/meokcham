@@ -9,7 +9,9 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }} />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="record/[date]" options={{ presentation: 'modal' }} />
+        </Stack>
       </ThemeProvider>
     </QueryClientProvider>
   );
