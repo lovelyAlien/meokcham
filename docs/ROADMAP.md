@@ -2,7 +2,7 @@
 
 - 작성일: 2026-10-22
 - 상태: 제안 (진행하면서 갱신)
-- 관련 문서: [PRD](PRD.md), [기술 스택](TECH_STACK.md), [DB 스키마](DB_SCHEMA.md), [API 명세](API_SPEC.md)
+- 관련 문서: [PRD](PRD.md), [기술 스택](TECH_STACK.md), [DB 스키마](DB_SCHEMA.md), [API 명세](API_SPEC.md), [UX 명세](UX_SPEC.md)
 
 > **요약**
 > - 설계(0단계) → 인증 → 핵심 루프 → 알림 → 보강 → 배포 순서.
@@ -15,7 +15,7 @@
 
 | 단계 | 내용 | 기능 | 완료 기준 | 상태 |
 | --- | --- | --- | --- | --- |
-| **0. 설계 마무리** | API 명세 확정, UI/UX 설계, 엔티티, 공통 예외 처리, 테스트 방침, `main` 푸시·CI | - | 화면 설계 합의, 엔티티 7개 + enum 2개, 백엔드 테스트·앱 typecheck/lint 통과 | 진행 중 |
+| **0. 설계 마무리** | API 명세 확정, UI/UX 설계, 엔티티, 공통 예외 처리, 테스트 방침, `main` 푸시·CI | - | 화면 설계 합의, 엔티티 7개 + enum 3개, 백엔드 테스트·앱 typecheck/lint 통과 | 진행 중 |
 | **1. 인증** | Apple/Google ID 토큰 검증 → JWT 발급·rotation, 시크릿 관리, 로그인 화면, 계정 삭제, EAS 개발 빌드 | 로그인 | 개발 빌드에서 로그인하고 인증이 필요한 API를 호출할 수 있음 | 대기 |
 | **2. 핵심 루프** | 온보딩, 금지 음식 CRUD → 기록 upsert(04:00 경계, 스냅샷) → 잔디 조회 API와 격자 UI, 경계·타임존 테스트 | F1, F2, F3 | 본인이 앱으로 매일 기록하고 1년 잔디를 볼 수 있음 | 대기 |
 | **3. 알림** | 푸시 토큰 등록, 사용자별 시각·타임존 스케줄러, 미기록자만 발송, 액션 버튼 | F4 | 지정 시각에 알림이 오고, 알림 탭 한 번으로 기록됨 | 대기 |
@@ -33,17 +33,17 @@ F7(음식별 잔디, Could)은 5단계 이후에 착수한다.
 이미 끝난 것: PRD, 기술 스택, DB 스키마(V1 마이그레이션 + 제약 조건 테스트), API 명세 초안.
 
 - [x] **API 명세 확정:** [API_SPEC.md](API_SPEC.md) 결정 D1~D4 확정(음식 10개, 준수율 분모=기록한 날, 소급 제한 없음, 알림은 앱을 열어 기록). 남은 미결 사항은 해당 단계에서 정한다
-- [ ] **UI/UX 설계:** 화면 목록과 흐름(온보딩 → 홈 → 기록 → 잔디 상세), 빈 상태, 잔디 3색 토큰(라이트·다크), 알림 문구
+- [x] **UI/UX 설계:** [UX_SPEC.md](UX_SPEC.md)에 정리(미결 사항 6개는 구현 시 정한다). 화면 목록과 흐름(온보딩 → 홈 → 기록 → 잔디 상세), 빈 상태, 잔디 3색 토큰(라이트·다크), 알림 문구
   - 현재 앱 화면은 모두 플레이스홀더이고 온보딩 라우트는 아직 없다.
   - 예시 금지 음식 목록(F1의 빠른 설정) 내용도 여기서 정한다.
-- [ ] **엔티티 구현:** `User`, `SocialAccount`, `ForbiddenFood`, `DailyRecord`, `NotificationSetting`, `PushToken`, `RefreshToken` + enum 2개(`SocialProvider`, `RecordStatus`)
+- [x] **엔티티 구현:** `User`, `SocialAccount`, `ForbiddenFood`, `DailyRecord`, `NotificationSetting`, `PushToken`, `RefreshToken` + enum 3개(`SocialProvider`, `RecordStatus`, `PushPlatform`)
   - `forbidden_snapshot`, `eaten_foods`는 `jsonb` 매핑을 정한다(`@JdbcTypeCode(SqlTypes.JSON)` + record)
   - `daily_records` upsert는 JPA가 아니라 `JdbcClient`로 한다(`ON CONFLICT`)
   - `notification_settings`는 PK가 `user_id`라 `@MapsId` 매핑
   - `ddl-auto: validate`이므로 엔티티와 스키마가 어긋나면 기동 시점에 잡힌다
-- [ ] **공통 예외 처리:** `@RestControllerAdvice`로 ProblemDetail + `code` 필드, 검증 실패 응답(`errors[]`). API 명세의 에러 형식을 모든 API가 따르게 하는 기반이라 첫 API보다 먼저 만든다.
+- [x] **공통 예외 처리:** `@RestControllerAdvice`로 ProblemDetail + `code` 필드, 검증 실패 응답(`errors[]`). API 명세의 에러 형식을 모든 API가 따르게 하는 기반이라 첫 API보다 먼저 만든다.
 - [ ] **테스트 방침:** 백엔드는 Testcontainers 통합 테스트 + 도메인 규칙 단위 테스트. 앱은 어디까지 자동 테스트할지 정한다(최소: typecheck, lint, 잔디 날짜 계산 같은 순수 함수 단위 테스트).
-- [ ] `main` 푸시(현재 `origin/main`보다 2커밋 앞섬), CI 실행 확인
+- [ ] `main` 푸시, CI 실행 확인
 
 ### 1. 인증
 
