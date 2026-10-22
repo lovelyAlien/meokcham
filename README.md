@@ -29,12 +29,15 @@
 docker compose -p meokcham -f infra/docker-compose.local.yml up -d
 
 # 2. 백엔드 실행 (http://localhost:8080, API 문서: /swagger-ui.html)
+#    JWT_SECRET은 필수(32바이트 이상). 없으면 기동하지 않는다.
+export JWT_SECRET=$(openssl rand -base64 48)
 cd backend && ./gradlew bootRun
 
 # 3. 앱 실행
 cd app && npm install && npm start
 ```
 
+- 소셜 로그인 설정(선택, 없으면 모든 ID 토큰을 거부한다): `APPLE_CLIENT_ID`(iOS 번들 ID), `GOOGLE_CLIENT_IDS`(쉼표로 구분)
 - 백엔드 테스트: `cd backend && ./gradlew test` (Testcontainers가 PostgreSQL을 따로 띄운다)
 - 앱 검사: `cd app && npm run typecheck && npm run lint`
 - API 타입 생성: 백엔드를 실행한 상태에서 `cd app && npm run gen:api`

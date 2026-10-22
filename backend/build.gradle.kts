@@ -43,4 +43,6 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	// 테스트 전용 값. 운영 시크릿이 아니다.
+	environment("JWT_SECRET", "test-only-secret-test-only-secret-0123456789")
 }

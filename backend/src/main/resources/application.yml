@@ -19,6 +19,15 @@ spring:
     virtual:
       enabled: true
 
+meokcham:
+  auth:
+    # 필수: 32바이트 이상. 예) export JWT_SECRET=$(openssl rand -base64 48)
+    jwt-secret: ${JWT_SECRET:}
+    access-ttl: 15m
+    refresh-ttl: 30d
+    apple-client-id: ${APPLE_CLIENT_ID:}
+    google-client-ids: ${GOOGLE_CLIENT_IDS:}
+
 server:
   shutdown: graceful
 

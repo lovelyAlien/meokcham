@@ -29,6 +29,6 @@ class MeokchamApplicationTests {
 
 	@Test
 	void otherEndpointsRequireAuthentication() throws Exception {
-		mockMvc.perform(get("/api/anything")).andExpect(status().isForbidden());
+		mockMvc.perform(get("/api/anything")).andExpect(status().isUnauthorized());
 	}
 }
