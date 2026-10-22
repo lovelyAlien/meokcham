@@ -76,8 +76,8 @@ export interface components {
             refreshToken: string;
         };
         TokenResponse: {
-            accessToken?: string;
-            refreshToken?: string;
+            accessToken: string;
+            refreshToken: string;
         };
         LoginRequest: {
             /** @enum {string} */
@@ -86,25 +86,25 @@ export interface components {
             timezone: string;
         };
         LoginResponse: {
-            accessToken?: string;
-            refreshToken?: string;
-            isNewUser?: boolean;
-            user?: components["schemas"]["UserSummary"];
+            accessToken: string;
+            refreshToken: string;
+            isNewUser: boolean;
+            user: components["schemas"]["UserSummary"];
         };
         UserSummary: {
             /** Format: int64 */
-            id?: number;
-            timezone?: string;
+            id: number;
+            timezone: string;
         };
         UpdateTimezoneRequest: {
             timezone: string;
         };
         UserResponse: {
             /** Format: int64 */
-            id?: number;
-            timezone?: string;
+            id: number;
+            timezone: string;
             /** Format: date-time */
-            createdAt?: string;
+            createdAt: string;
         };
     };
     responses: never;

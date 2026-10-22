@@ -6,7 +6,7 @@
 import type { components } from './api-types';
 import { secureTokenStore, type TokenStore } from './token-store';
 
-type Tokens = Required<components['schemas']['TokenResponse']>;
+type Tokens = components['schemas']['TokenResponse'];
 
 export class ApiError extends Error {
   constructor(

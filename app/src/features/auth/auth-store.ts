@@ -5,7 +5,7 @@ import type { components } from '@/lib/api-types';
 import { queryClient } from '@/lib/query-client';
 import { getIdToken, signOutOfProviders, type SocialProvider } from './social-login';
 
-type LoginResponse = Required<components['schemas']['LoginResponse']>;
+type LoginResponse = components['schemas']['LoginResponse'];
 
 interface AuthState {
   /** loading: 저장된 세션을 확인하는 중 */
