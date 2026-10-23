@@ -16,7 +16,7 @@
 | 단계 | 내용 | 기능 | 완료 기준 | 상태 |
 | --- | --- | --- | --- | --- |
 | **0. 설계 마무리** | API 명세 확정, UI/UX 설계, 엔티티, 공통 예외 처리, 테스트 방침, `main` 푸시·CI | - | 화면 설계 합의, 엔티티 7개 + enum 3개, 백엔드 테스트·앱 typecheck/lint 통과 | 완료 |
-| **1. 인증** | Apple/Google ID 토큰 검증 → JWT 발급·rotation, 시크릿 관리, 로그인 화면, 계정 삭제, EAS 개발 빌드 | 로그인 | 개발 빌드에서 로그인하고 인증이 필요한 API를 호출할 수 있음 | 대기 |
+| **1. 인증** | Apple/Google ID 토큰 검증 → JWT 발급·rotation, 시크릿 관리, 로그인 화면, 계정 삭제, EAS 개발 빌드 | 로그인 | 개발 빌드에서 로그인하고 인증이 필요한 API를 호출할 수 있음 | 완료 |
 | **2. 핵심 루프** | 온보딩, 금지 음식 CRUD → 기록 upsert(04:00 경계, 스냅샷) → 잔디 조회 API와 격자 UI, 경계·타임존 테스트 | F1, F2, F3 | 본인이 앱으로 매일 기록하고 1년 잔디를 볼 수 있음 | 대기 |
 | **3. 알림** | 푸시 토큰 등록, 사용자별 시각·타임존 스케줄러, 미기록자만 발송, 액션 버튼 | F4 | 지정 시각에 알림이 오고, 알림 탭 한 번으로 기록됨 | 대기 |
 | **4. 보강** | 스트릭·준수율, 소급 정정(기간 제한 없음), 접근성(텍스트 상세·다크 모드) | F5, F6 | 통계 화면과 정정이 동작 | 대기 |
@@ -50,8 +50,11 @@ F7(음식별 잔디, Could)은 5단계 이후에 착수한다.
 - 백엔드: ID 토큰 검증(Apple/Google), Access JWT 발급, Refresh rotation과 재사용 탐지, `SecurityConfig`에 JWT 검증 추가, **계정 삭제 API**(`DELETE /users/me`, App Store 필수 요건)
 - 앱: 로그인 화면(`(auth)/login`), 토큰 저장(`expo-secure-store`), `apiFetch`에 Authorization 헤더와 401 재발급 처리
 - **시크릿·환경 설정:** JWT 서명 키, Apple/Google 클라이언트 ID, Expo 토큰은 코드나 저장소에 넣지 않는다. 로컬은 환경 변수/`.env`(gitignore), 서버는 Compose 환경 변수로 주입한다.
-- **EAS 개발 빌드:** Apple 로그인과 푸시는 Expo Go로 검증하기 어렵다. 번들 ID, 서명 인증서, 개발 빌드 설정을 이 단계에서 끝낸다(3단계 푸시가 같은 빌드를 쓴다).
-- 의존: Apple Developer 계정, Google OAuth 클라이언트 설정
+- **EAS 개발 빌드:** Apple 로그인과 푸시는 Expo Go로 검증하기 어렵다.
+  - 완료: EAS 프로젝트 연결, `eas.json`, `expo-dev-client`, Apple App ID(Sign in with Apple, Push Notifications), Google iOS 클라이언트.
+  - 로그인은 **시뮬레이터용 개발 빌드(로컬 `xcodebuild`)**로 Apple·Google 모두 확인했다. EAS 클라우드 빌드와 실기기 서명은 하지 않았다. 실기기 서명과 빌드는 푸시 알림을 실기기로 검증하는 3단계에서 한다.
+  - 참고: `expo run:ios`는 연결된 실기기를 대상으로 잡아 서명 오류로 멈춘다. 로그인 플러그인을 추가하거나 바꾼 뒤에는 `npx expo prebuild --platform ios --clean`으로 `ios/`를 다시 만들어야 URL 스킴·entitlement가 반영된다.
+- 의존: Apple Developer 계정, Google OAuth 클라이언트 설정(완료)
 
 ### 2. 핵심 루프
 
